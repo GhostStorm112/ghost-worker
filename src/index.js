@@ -11,51 +11,52 @@ const AmqpConnector = require('./utils/AqmpConnector')
 const promisifyAll = require('tsubaki').promisifyAll
 const fs = promisifyAll(require('fs'))
 const path = require('path')
-const info = require('./package.json')
+const info = require('../package.json')
 
 class GhostGateway extends EventEmitter {
   constructor (options = { }) {
     super()
 
-    this.settings = new SettingsManager({
-      dburl: process.env.MONGO_URL
-    })
     this.options = Object.assign({
       disabledEvents: null,
       camelCaseEvents: false,
       eventPath: path.join(__dirname, './eventHandlers/')
     }, options)
+    
+    this.settings = new SettingsManager({
+      dburl: options.mongoUrl
+    })
 
     this.redis = new Cache({
       port: 6379,
-      host: process.env.REDIS_URL,
+      host: options.redisUrl,
       db: 2
     })
 
     this.cache = new Cache({
       port: 6379,
-      host: process.env.REDIS_URL,
+      host: options.redisUrl,
       db: 3
     })
 
     this.lavalink = new GhostCore.LavalinkWorker({
-      user: process.env.BOT_ID,
-      password: process.env.LAVALINK_PASSWORD,
-      rest: process.env.LAVALINK_REST,
-      ws: process.env.LAVALINK_WS,
+      user: options.botId,
+      password: options.lavalinkPassword,
+      rest: options.lavalinkRest,
+      ws: options.lavalinkWs,
       redis: this.redis,
       gateway: this.shard
     })
 
     this.info = info
     this.shard = new Shard(this)
-    this.rest = new SnowTransfer(process.env.TOKEN)
+    this.rest = new SnowTransfer(options.discordToken)
     this.connector = new AmqpConnector(this)
     this.eventHandlers = new Map()
     this.log = new GhostCore.Logger()
 
     this.isOwner = function isOwner (id) {
-      if (id === process.env.OWNER_ID) {
+      if (id === options.ownerId) {
         return true
       } else {
         return false

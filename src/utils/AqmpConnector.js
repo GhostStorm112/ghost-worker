@@ -10,7 +10,7 @@ class AmqpConnector extends EventEmitter {
   }
 
   async initialize () {
-    this.connection = await amqp.connect(process.env.AMQP_URL || 'amqp://localhost')
+    this.connection = await amqp.connect(this.client.options.amqpUrl || 'amqp://localhost')
     this.channel = await this.connection.createChannel()
 
     this.emit('ready')
