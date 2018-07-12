@@ -18,7 +18,6 @@ class AmqpConnector extends EventEmitter {
     this.channel.assertQueue('weather-events', { durable: false, messageTtl: 60e3 })
     this.channel.consume('weather-events', async event => {
       await this.channel.ack(event)
-
       this.emit('event', JSON.parse(event.content.toString()))
     })
   }
