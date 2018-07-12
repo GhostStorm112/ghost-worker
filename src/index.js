@@ -13,7 +13,7 @@ const fs = promisifyAll(require('fs'))
 const path = require('path')
 const info = require('../package.json')
 
-class GhostGateway extends EventEmitter {
+class GhostWorker extends EventEmitter {
   constructor (options = { }) {
     super()
 
@@ -93,4 +93,4 @@ class GhostGateway extends EventEmitter {
   }
 }
 
-module.exports = GhostGateway
+module.exports = GhostWorker
