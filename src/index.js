@@ -7,7 +7,7 @@ const SnowTransfer = require('snowtransfer')
 const GhostCore = require('Core')
 const SettingsManager = require('SettingsManager')
 const Shard = require('./utils/shard')
-const AmqpConnector = require('./AqmpConnector')
+const AmqpConnector = require('./utils/AqmpConnector')
 const promisifyAll = require('tsubaki').promisifyAll
 const fs = promisifyAll(require('fs'))
 const path = require('path')
@@ -17,7 +17,6 @@ class GhostGateway extends EventEmitter {
   constructor (options = { }) {
     super()
 
-    this.log = new GhostCore.Logger()
     this.settings = new SettingsManager({
       dburl: process.env.MONGO_URL
     })
