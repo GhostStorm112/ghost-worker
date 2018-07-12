@@ -88,7 +88,6 @@ class GhostWorker extends EventEmitter {
   }
 
   processEvent (event) {
-    console.log(GhostCore.Utils.CamelCaseEventName(event.t))
     if (event.d) { event.d['shard_id'] = event.shard_id }
     return this.emit(this.options.camelCaseEvents ? GhostCore.Utils.CamelCaseEventName(event.t) : event.t, event.d)
   }
