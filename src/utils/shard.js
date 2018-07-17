@@ -3,7 +3,7 @@ class Shard {
     this.wm = wm
   }
   sendWS (shardID, op, packet) {
-    this.wm.connector.sendToGateway({
+    this.wm.connector.sendToGateway(shardID, {
       s: shardID,
       t: op,
       d: packet

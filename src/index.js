@@ -22,7 +22,7 @@ class GhostWorker extends EventEmitter {
       camelCaseEvents: false,
       eventPath: path.join(__dirname, './eventHandlers/')
     }, options)
-    
+
     this.settings = new SettingsManager({
       dburl: options.mongoUrl
     })
@@ -74,6 +74,7 @@ class GhostWorker extends EventEmitter {
 
       const handler = new (require(this.options.eventPath + file))(this)
       this.eventHandlers.set(handler.name, handler)
+      this.log.info('Loader', `Handler ${handler.name} loaded`)
 
       if (typeof handler.init === 'function') { await handler.init() }
 
@@ -83,7 +84,6 @@ class GhostWorker extends EventEmitter {
 
   processEvent (event) {
     if (event.d) { event.d['shard_id'] = event.shard_id }
-    console.log(event.t)
     return this.emit(event.t, event.d)
   }
 }
