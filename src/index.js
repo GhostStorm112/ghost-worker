@@ -74,7 +74,7 @@ class GhostWorker extends EventEmitter {
 
       const handler = new (require(this.options.eventPath + file))(this)
       this.eventHandlers.set(handler.name, handler)
-      this.log.info('Loader', `Handler ${handler.name} loaded`)
+      this.log.debug('Loader', `Handler ${handler.name} loaded`)
 
       if (typeof handler.init === 'function') { await handler.init() }
 
