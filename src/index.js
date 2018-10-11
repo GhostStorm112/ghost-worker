@@ -44,7 +44,6 @@ class GhostWorker extends EventEmitter {
 
     this.info = info
     this.shard = new Shard(this)
-    console.log(options.restHost)
     this.rest = new SnowTransfer(options.discordToken, {baseHost: options.restHost})
     this.connector = new AmqpConnector(this)
     this.eventHandlers = new Map()
