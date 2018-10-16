@@ -22,10 +22,8 @@ class AmqpConnector extends EventEmitter {
     })
   }
 
-  async sendToGateway (shardId, event) {
-    if (shardId >= 0) {
-      return this.channel.sendToQueue(`shard-${shardId}`, Buffer.from(JSON.stringify(event)))
-    }
+  async sendToGateway (gateway, event) {
+    return this.channel.sendToQueue(gateway, Buffer.from(JSON.stringify(event)))
   }
 }
 
