@@ -20,7 +20,8 @@
 		"ghost-core": "https://gitlab.com/GhostStorm/Core.git#1a420259",
 		"snowtransfer": "^0.2.4",
 		"tsubaki": "^1.3.0",
-		"amqplib": "^0.5.2"
+		"amqplib": "^0.5.2",
+		"amqp-connection-manager": "^2.2.0"
 	},
 	"devDependencies": {
 		"dotenv": "^6.0.0",

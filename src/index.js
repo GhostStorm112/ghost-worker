@@ -41,14 +41,14 @@ class GhostWorker extends EventEmitter {
       redis: this.cache,
       gateway: this.shard
     })
-
+    
     this.info = info
     this.shard = new Shard(this)
     this.rest = new SnowTransfer(options.discordToken, {baseHost: options.restHost})
     this.connector = new AmqpConnector(this)
     this.eventHandlers = new Map()
     this.log = new GhostCore.Logger()
-
+    
     this.isOwner = function isOwner (id) {
       if (id === options.ownerId) {
         return true
@@ -62,7 +62,10 @@ class GhostWorker extends EventEmitter {
     await this.connector.initialize()
     await this.loadEventHandlers()
     await this.settings.init()
-
+    this.lavalink.on('error', (d) => {
+      this.log.error('Lavalink', d)
+      this.log.info('Lavalink', 'Waiting for reconnect')
+    })
     this.connector.on('event', event => this.processEvent(event))
   }
 
