@@ -17,7 +17,7 @@
 		"SettingsManager": "https://gitlab.com/GhostStorm/SettingsManager.git",
 		"bluebird": "^3.5.1",
 		"eventemitter3": "^3.1.0",
-		"ghost-core": "https://gitlab.com/GhostStorm/Core.git#f9804abd",
+		"ghost-core": "https://gitlab.com/GhostStorm/Core.git",
 		"snowtransfer": "^0.2.4",
 		"tsubaki": "^1.3.0",
 		"amqplib": "^0.5.2",
