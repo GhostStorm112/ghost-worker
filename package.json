@@ -1,6 +1,6 @@
 {
-	"name": "ghost-worker",
-	"version": "0.0.1",
+	"name": "ghost-worker-framework",
+	"version": "0.5.0",
 	"description": "GhostStorm worker framework",
 	"main": "src/index.js",
 	"repository": {
