@@ -12,7 +12,7 @@ const promisifyAll = require('tsubaki').promisifyAll
 const fs = promisifyAll(require('fs'))
 const path = require('path')
 const info = require('../package.json')
-
+const Handler = require('./CommandHandler/Handler')
 class GhostWorker extends EventEmitter {
   constructor (options = { }) {
     super()
@@ -46,6 +46,7 @@ class GhostWorker extends EventEmitter {
     this.shard = new Shard(this)
     this.rest = new SnowTransfer(options.discordToken, {baseHost: options.restHost})
     this.connector = new AmqpConnector(this)
+    this.commandHandler = new Handler(options.inhibitorPath, options.commandPath, this)
     this.eventHandlers = new Map()
     this.log = new GhostCore.Logger()
     
@@ -62,11 +63,20 @@ class GhostWorker extends EventEmitter {
     await this.connector.initialize()
     await this.loadEventHandlers()
     await this.settings.init()
+    await this.commandHandler.initialize() 
     this.lavalink.on('error', (d) => {
       this.log.error('Lavalink', d)
       this.log.info('Lavalink', 'Waiting for reconnect')
     })
-    this.connector.on('event', event => this.processEvent(event))
+    this.connector.on('event', event => {
+      if (event.d) { event.d['shard_id'] = event.shard_id }
+      if(event.t === 'MESSAGE_CREATE'){
+        this.commandHandler.handle(event.d)
+      } else {
+        this.emit(event.t, event.d)
+
+      }
+    })
   }
 
   async loadEventHandlers () {
@@ -83,11 +93,6 @@ class GhostWorker extends EventEmitter {
 
       for (const event of handler.canHandle) { this.on(event, handler.handle.bind(handler)) }
     }
-  }
-
-  processEvent (event) {
-    if (event.d) { event.d['shard_id'] = event.shard_id }
-    return this.emit(event.t, event.d)
   }
 }
 
