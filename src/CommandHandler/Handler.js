@@ -42,42 +42,22 @@ class Handler extends EventEmitter {
       
       const commandName = command.match(/^[^ ]+/)[0].toLowerCase()
       const matched = this.commands.get(commandName)
-      // this.client.log.profile(`Command ${commandName}`)
 
       if (!command) { return }
       
       const reason = this.runInhibitors(event, commandName)
       if (await reason) {
-        // this.client.log.profile(`Command ${commandName}`)
         return this.client.rest.channel.createMessage(event.channel_id, await reason)
       }
-
-      if (matched) {
-        if (commandName === 'help' && command.substring(commandName.length + 1)) {
-          // this.client.log.profile(`Command ${commandName}`)
-        /*   this.statsClient.increment('command', 1, 1, [`command:${commandName}`, `guild:${event.guild_id}`], (error) => {
-            if (error) {
-              this.client.log.error('CommandHandler', error.message)
-            }
-          }) */
-          return await matched.run(event, command.substring(commandName.length + 1), this.commands)
-        } else {
-          // this.client.log.profile(`Command ${commandName}`)
-          /*    this.statsClient.increment('command', 1, 1, [`command:${commandName}`, `guild:${event.guild_id}`], (error) => {
-            if (error) {
-              this.client.log.error('CommandHandler', error)
-            }
-          }) */
-          if(matched.allowPM && !event.guild_id){
-            return this.client.rest.channel.createMessage(event.channel_id, 'This command is not allowed in PM\'S!') 
-          } else {
-            return await matched.run(event, command.substring(commandName.length + 1))
-          }
-        }
+      if(matched && matched.allowPM === false && !event.guild_id){
+        return this.client.rest.channel.createMessage(event.channel_id, 'This command is not allowed in PM\'S!') 
       }
+      if (matched) {
+        return await matched.run(event, command.substring(commandName.length + 1))
+      }
+      
       for (const c of this.commands.values()) {
         if (c.aliases && c.aliases.includes(commandName)) {
-          // this.client.log.profile(`Command ${commandName}`)
           if(c.allowPM && !event.guild_id){
             return this.client.rest.channel.createMessage(event.channel_id, 'This command is not allowed in PM\'S!') 
           } else {
@@ -86,7 +66,6 @@ class Handler extends EventEmitter {
         }
       }
     } catch (error) {
-      console.error(error)
       this.client.log.error('CommandHandler', error.message)
     }
   }
