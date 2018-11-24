@@ -37,9 +37,9 @@ class Handler extends EventEmitter {
     try {
       if (event.author.bot || event.author.id === process.env.BOT_ID) { return }
       let command
-      
+      const channel = await this.client.cache.channels[event.channel_id].get()
       if (this.mentionRegex.test(event.content)) { command = event.content.replace(/^[^ ]+ /, '').trim() } else if (event.content.startsWith(this.prefix)) { command = event.content.substring(this.prefix.length).trim() } else { return }
-      
+      console.log(channel)
       const commandName = command.match(/^[^ ]+/)[0].toLowerCase()
       const matched = this.commands.get(commandName)
 
@@ -49,23 +49,31 @@ class Handler extends EventEmitter {
       if (await reason) {
         return this.client.rest.channel.createMessage(event.channel_id, await reason)
       }
-      if(matched && matched.allowPM === false && !event.guild_id){
-        return this.client.rest.channel.createMessage(event.channel_id, 'This command is not allowed in PM\'S!') 
-      }
-      if (matched) {
+      if(matched){
+        if(matched.guildOnly && channel.type == 1){
+          return this.client.rest.channel.createMessage(event.channel_id, 'This command is not allowed in PM\'S!') 
+        }
+        if(matched.nsfw && await !channel.nsfw || channel.type == 1){
+          return this.client.rest.channel.createMessage(event.channel_id, 'This command is nsfw') 
+        }
         return await matched.run(event, command.substring(commandName.length + 1))
       }
-      
-      for (const c of this.commands.values()) {
-        if (c.aliases && c.aliases.includes(commandName)) {
-          if(c.allowPM && !event.guild_id){
-            return this.client.rest.channel.createMessage(event.channel_id, 'This command is not allowed in PM\'S!') 
-          } else {
+      else {
+        for (const c of this.commands.values()) {
+          if (c.aliases && c.aliases.includes(commandName)) {
+            if(c.guildOnly && channel.type == 1){
+              return this.client.rest.channel.createMessage(event.channel_id, 'This command is not allowed in PM\'S!') 
+            }
+            if(c.nsfw && await !channel.nsfw || channel.type == 1){
+              return this.client.rest.channel.createMessage(event.channel_id, 'This command is nsfw') 
+            }
             return await c.run(event, command.substring(commandName.length + 1))
           }
         }
       }
+      
     } catch (error) {
+      console.error(error)
       this.client.log.error('CommandHandler', error.message)
     }
   }
