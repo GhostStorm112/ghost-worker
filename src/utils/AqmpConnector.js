@@ -23,7 +23,6 @@ class AmqpConnector extends EventEmitter {
         ])
       }.bind(this)
     })
-
     this.connection.on('disconnect', function(params) {
       this.client.log.info('AMQP', 'Disconnected!')
       this.client.log.error('AMQP', 'Disconnected ' + params.err.stack)

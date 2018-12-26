@@ -42,6 +42,11 @@ class GhostWorker extends EventEmitter {
       gateway: this.shard
     })
     
+    this.lavalink.on('error', (d) => {
+      this.log.error('Lavalink', d)
+      this.log.info('Lavalink', 'Waiting for reconnect')
+    })
+ 
     this.info = info
     this.shard = new Shard(this)
     this.rest = new SnowTransfer(options.discordToken, {baseHost: options.restHost})
@@ -49,7 +54,7 @@ class GhostWorker extends EventEmitter {
     this.commandHandler = new Handler(options.inhibitorPath, options.commandPath, this)
     this.eventHandlers = new Map()
     this.log = new GhostCore.Logger()
-    
+   
     this.isOwner = function isOwner (id) {
       if (id === options.ownerId) {
         return true
@@ -61,15 +66,12 @@ class GhostWorker extends EventEmitter {
 
   async initialize () {
     this.log.info('Worker', 'Starting...')
-    await this.connector.initialize()
-    await this.settings.init()
+    this.connector.initialize()
+    this.settings.init()
     await this.commandHandler.initialize() 
     await this.loadEventHandlers()
     this.log.info('Worker', 'Started succesfully')
-    this.lavalink.on('error', (d) => {
-      this.log.error('Lavalink', d)
-      this.log.info('Lavalink', 'Waiting for reconnect')
-    })
+
     this.connector.on('event', event => {
       if (event.d) { event.d['shard_id'] = event.shard_id }
       if(event.t === 'MESSAGE_CREATE'){
