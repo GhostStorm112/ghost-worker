@@ -11,7 +11,6 @@ class AmqpConnector extends EventEmitter {
 
   async initialize () {
     this.connection = amqp.connect([this.client.options.amqpUrl || 'amqp://localhost'], {json: true})
-    
     this.channel = this.connection.createChannel({
       setup: function(channel) {
         return Promise.all([

@@ -60,10 +60,12 @@ class GhostWorker extends EventEmitter {
   }
 
   async initialize () {
+    this.log.info('Worker', 'Starting...')
     await this.connector.initialize()
-    await this.loadEventHandlers()
     await this.settings.init()
     await this.commandHandler.initialize() 
+    await this.loadEventHandlers()
+    this.log.info('Worker', 'Started succesfully')
     this.lavalink.on('error', (d) => {
       this.log.error('Lavalink', d)
       this.log.info('Lavalink', 'Waiting for reconnect')
