@@ -4,7 +4,7 @@ require('dotenv').config()
 const { default: Cache } = require('@spectacles/cache')
 const EventEmitter = require('eventemitter3')
 const SnowTransfer = require('snowtransfer')
-const GhostCore = require('ghost-core')
+const GhostCore = require('../../Core')
 const SettingsManager = require('SettingsManager')
 const Shard = require('./utils/shard')
 const AmqpConnector = require('./utils/AqmpConnector')
@@ -37,11 +37,14 @@ class GhostWorker extends EventEmitter {
       user: options.botId,
       password: options.lavalinkPassword,
       rest: options.lavalinkRest,
-      ws: options.lavalinkWs,
+      wsurl: options.lavalinkWs,
+      resumeID: (async () => {
+        await this.cache.storage.get('connection-id')
+      })(),
       redis: this.cache,
       gateway: this.shard
     })
-    
+
     this.lavalink.on('error', (d) => {
       this.log.error('Lavalink', d)
       this.log.info('Lavalink', 'Waiting for reconnect')
