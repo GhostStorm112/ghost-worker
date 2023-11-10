@@ -18,7 +18,7 @@
 		"bluebird": "^3.5.1",
 		"eventemitter3": "^3.1.0",
 		"ghost-core": "git+ssh://git@gitlab.com:GhostStorm/Core.git",
-		"snowtransfer": "^0.2.4",
+		"snowtransfer": "^0.9.0",
 		"tsubaki": "^1.3.0",
 		"amqplib": "^0.5.2",
 		"amqp-connection-manager": "^2.2.0"
